@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_height="match_parent"
+		android:layout_width="match_parent"
+		android:focusableInTouchMode="true"
+		android:orientation="vertical">
+
+		<ScrollView
+				android:layout_height="wrap_content"
+				android:layout_width="match_parent"
+				android:layout_weight="1.0">
+
+				<LinearLayout
+						android:layout_height="wrap_content"
+						android:layout_width="match_parent"
+						android:orientation="vertical">
+
+						<LinearLayout
+								android:layout_height="wrap_content"
+								android:layout_width="match_parent"
+								android:orientation="horizontal">
+
+								<TextView
+										android:layout_height="match_parent"
+										android:text="1"
+										android:layout_width="wrap_content"
+										android:textStyle="bold"
+										android:id="@+id/codeLines"
+										android:gravity="right"
+										android:paddingRight="1dp"
+										android:textSize="16sp"
+										android:typeface="monospace"
+										android:paddingTop="8dp"/>
+
+								<EditText
+										android:layout_height="wrap_content"
+										android:inputType="textMultiLine|textNoSuggestions"
+										android:layout_width="match_parent"
+										android:id="@+id/code"
+										android:textIsSelectable="true"
+										android:ems="8000"
+										android:textSize="16sp"/>
+
+						</LinearLayout>
+
+						<LinearLayout
+								android:layout_height="wrap_content"
+								android:layout_width="match_parent"
+								android:orientation="horizontal"
+								android:id="@+id/row1">
+
+								<Button
+										android:layout_height="wrap_content"
+										style="?android:attr/buttonBarButtonStyle"
+										android:text="0"
+										android:layout_width="wrap_content"
+										android:padding="0dp"
+										android:layout_weight="1.0"/>
+
+								<Button
+										android:layout_height="wrap_content"
+										style="?android:attr/buttonBarButtonStyle"
+										android:text="1"
+										android:layout_width="wrap_content"
+										android:padding="0dp"
+										android:layout_weight="1.0"/>
+
+								<Button
+										android:layout_height="wrap_content"
+										style="?android:attr/buttonBarButtonStyle"
+										android:text="2"
+										android:layout_width="wrap_content"
+										android:padding="0dp"
+										android:layout_weight="1.0"/>
+
+								<Button
+										android:layout_height="wrap_content"
+										style="?android:attr/buttonBarButtonStyle"
+										android:text="3"
+										android:layout_width="wrap_content"
+										android:padding="0dp"
+										android:layout_weight="1.0"/>
+
+								<Button
+										android:layout_height="wrap_content"
+										style="?android:attr/buttonBarButtonStyle"
+										android:text="4"
+										android:layout_width="wrap_content"
+										android:padding="0dp"
+										android:layout_weight="1.0"/>
+
+						</LinearLayout>
+
+						<LinearLayout
+								android:layout_height="wrap_content"
+								android:layout_width="match_parent"
+								android:orientation="horizontal"
+								android:id="@+id/row2">
+
+								<Button
+										android:layout_height="wrap_content"
+										style="?android:attr/buttonBarButtonStyle"
+										android:text="5"
+										android:layout_width="wrap_content"
+										android:padding="0dp"
+										android:layout_weight="1.0"/>
+
+								<Button
+										android:layout_height="wrap_content"
+										style="?android:attr/buttonBarButtonStyle"
+										android:text="6"
+										android:layout_width="wrap_content"
+										android:padding="0dp"
+										android:layout_weight="1.0"/>
+
+								<Button
+										android:layout_height="wrap_content"
+										style="?android:attr/buttonBarButtonStyle"
+										android:text="7"
+										android:layout_width="wrap_content"
+										android:padding="0dp"
+										android:layout_weight="1.0"/>
+
+								<Button
+										android:layout_height="wrap_content"
+										style="?android:attr/buttonBarButtonStyle"
+										android:text="8"
+										android:layout_width="wrap_content"
+										android:padding="0dp"
+										android:layout_weight="1.0"/>
+
+								<Button
+										android:layout_height="wrap_content"
+										style="?android:attr/buttonBarButtonStyle"
+										android:text="9"
+										android:layout_width="wrap_content"
+										android:padding="0dp"
+										android:layout_weight="1.0"/>
+
+						</LinearLayout>
+
+						<LinearLayout
+								android:layout_height="wrap_content"
+								android:layout_width="match_parent"
+								android:orientation="horizontal"
+								android:id="@+id/row3">
+
+								<Button
+										android:layout_height="wrap_content"
+										style="?android:attr/buttonBarButtonStyle"
+										android:text="&lt;"
+										android:layout_width="wrap_content"
+										android:padding="0dp"
+										android:layout_weight="1.0"/>
+
+								<Button
+										android:layout_height="wrap_content"
+										style="?android:attr/buttonBarButtonStyle"
+										android:text="&gt;"
+										android:layout_width="wrap_content"
+										android:padding="0dp"
+										android:layout_weight="1.0"/>
+
+								<Button
+										android:layout_height="wrap_content"
+										style="?android:attr/buttonBarButtonStyle"
+										android:text="1"
+										android:layout_width="wrap_content"
+										android:padding="0dp"
+										android:layout_weight="1.0"/>
+
+								<Button
+										android:layout_height="wrap_content"
+										style="?android:attr/buttonBarButtonStyle"
+										android:text="0"
+										android:layout_width="wrap_content"
+										android:padding="0dp"
+										android:layout_weight="1.0"/>
+
+								<Button
+										android:layout_height="wrap_content"
+										style="?android:attr/buttonBarButtonStyle"
+										android:text="\?"
+										android:layout_width="wrap_content"
+										android:padding="0dp"
+										android:layout_weight="1.0"/>
+
+								<Button
+										android:layout_height="wrap_content"
+										style="?android:attr/buttonBarButtonStyle"
+										android:text="!"
+										android:layout_width="wrap_content"
+										android:padding="0dp"
+										android:layout_weight="1.0"/>
+
+						</LinearLayout>
+
+						<LinearLayout
+								android:layout_height="wrap_content"
+								android:layout_width="match_parent"
+								android:orientation="horizontal"
+								android:id="@+id/row4">
+
+								<Button
+										android:layout_height="wrap_content"
+										style="?android:attr/buttonBarButtonStyle"
+										android:text="="
+										android:layout_width="wrap_content"
+										android:padding="0dp"
+										android:layout_weight="1.0"/>
+
+								<Button
+										android:layout_height="wrap_content"
+										style="?android:attr/buttonBarButtonStyle"
+										android:text="~"
+										android:layout_width="wrap_content"
+										android:padding="0dp"
+										android:layout_weight="1.0"/>
+
+								<Button
+										android:layout_height="wrap_content"
+										style="?android:attr/buttonBarButtonStyle"
+										android:text="++"
+										android:layout_width="wrap_content"
+										android:padding="0dp"
+										android:layout_weight="1.0"/>
+
+								<Button
+										android:layout_height="wrap_content"
+										style="?android:attr/buttonBarButtonStyle"
+										android:text="--"
+										android:layout_width="wrap_content"
+										android:padding="0dp"
+										android:layout_weight="1.0"/>
+
+						</LinearLayout>
+
+						<LinearLayout
+								android:layout_height="wrap_content"
+								android:layout_width="match_parent"
+								android:orientation="horizontal">
+
+								<Button
+										android:layout_height="wrap_content"
+										style="?android:attr/buttonBarButtonStyle"
+										android:text="Space"
+										android:layout_width="wrap_content"
+										android:layout_weight="1.0"
+										android:id="@+id/space"/>
+
+								<Button
+										android:layout_height="wrap_content"
+										style="?android:attr/buttonBarButtonStyle"
+										android:text="Next Line"
+										android:layout_width="wrap_content"
+										android:layout_weight="1.0"
+										android:id="@+id/nl"/>
+
+								<Button
+										android:layout_height="wrap_content"
+										style="?android:attr/buttonBarButtonStyle"
+										android:text="Delete"
+										android:layout_width="wrap_content"
+										android:layout_weight="1.0"
+										android:id="@+id/del"/>
+
+						</LinearLayout>
+
+				</LinearLayout>
+
+		</ScrollView>
+
+		<View
+				android:layout_height="4dp"
+				android:background="?android:attr/dividerVertical"
+				android:layout_width="match_parent"/>
+
+		<LinearLayout
+				android:layout_height="wrap_content"
+				android:layout_width="match_parent"
+				android:orientation="horizontal">
+
+				<Button
+						android:layout_height="wrap_content"
+						style="?android:attr/buttonBarButtonStyle"
+						android:text="Run"
+						android:layout_width="wrap_content"
+						android:layout_weight="1.0"
+						android:id="@+id/btn_run"/>
+
+				<Button
+						android:layout_height="wrap_content"
+						style="?android:attr/buttonBarButtonStyle"
+						android:text="Line"
+						android:layout_width="wrap_content"
+						android:layout_weight="1.0"
+						android:id="@+id/btn_line"/>
+
+				<Button
+						android:layout_height="wrap_content"
+						style="?android:attr/buttonBarButtonStyle"
+						android:text="Debug"
+						android:layout_width="wrap_content"
+						android:layout_weight="1.0"
+						android:id="@+id/btn_debug"/>
+
+				<Button
+						android:layout_height="wrap_content"
+						style="?android:attr/buttonBarButtonStyle"
+						android:text="Lint"
+						android:layout_width="wrap_content"
+						android:layout_weight="1.0"
+						android:id="@+id/btn_lint"/>
+
+		</LinearLayout>
+
+</LinearLayout>
+
