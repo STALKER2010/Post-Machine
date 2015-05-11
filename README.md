@@ -60,7 +60,10 @@ And so like these:
 #### Work with line
 It's just:
 
-```?```
+```
+?
+```
+
 
 It's true when line at current position is marked, false otherwise.
 
