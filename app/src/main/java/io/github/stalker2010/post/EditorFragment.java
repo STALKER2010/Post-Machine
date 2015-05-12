@@ -7,12 +7,12 @@ import android.view.*;
 import android.view.inputmethod.*;
 import android.widget.*;
 import io.github.stalker2010.post.vm.*;
+import java.lang.ref.WeakReference;
 
 public class EditorFragment extends Fragment implements View.OnClickListener {
 		public EditText code;
 		public TextView clines;
 		volatile boolean changedCode = false;
-		private Button lastPressed = null;
 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -20,6 +20,7 @@ public class EditorFragment extends Fragment implements View.OnClickListener {
 				{
 						code = (EditText) v.findViewById(R.id.code);
 						clines = (TextView) v.findViewById(R.id.codeLines);
+						uRunnable.fragment = new WeakReference<EditorFragment>(this);
 						final LinearLayout row1 = (LinearLayout) v.findViewById(R.id.row1);
 						final LinearLayout row2 = (LinearLayout) v.findViewById(R.id.row2);
 						final LinearLayout row3 = (LinearLayout) v.findViewById(R.id.row3);
@@ -141,10 +142,6 @@ public class EditorFragment extends Fragment implements View.OnClickListener {
 												return true;
 										}
 								});
-//						code.setInputType(InputType.TYPE_NULL);
-//						if (android.os.Build.VERSION.SDK_INT >= 11) {
-//								code.setRawInputType(InputType.TYPE_CLASS_TEXT);
-//						}
 				}
 				return v;
 		}
@@ -152,7 +149,6 @@ public class EditorFragment extends Fragment implements View.OnClickListener {
 		public void onClick(View p1) {
 				if (p1 instanceof Button) {
 						Button b = (Button) p1;
-						lastPressed = b;
 						String bc = b.getText().toString();
 						insertCode(bc);
 				}
@@ -161,15 +157,61 @@ public class EditorFragment extends Fragment implements View.OnClickListener {
 		@Override
 		public void onPause() {
 				super.onPause();
-				((MainActivity) getActivity()).code = code.getText().toString();
+				PostApplication.code = code.getText().toString();
 		}
 
 
 		@Override
 		public void onResume() {
 				super.onResume();
-				code.setText(((MainActivity)getActivity()).code);
+				code.setText(PostApplication.code);
 				uHandler.postDelayed(uRunnable, 10);
+		}
+
+		@Override
+		public void onDestroyView() {
+				super.onDestroyView();
+				{
+						final LinearLayout row1 = (LinearLayout) getView().findViewById(R.id.row1);
+						final LinearLayout row2 = (LinearLayout) getView().findViewById(R.id.row2);
+						final LinearLayout row3 = (LinearLayout) getView().findViewById(R.id.row3);
+						final LinearLayout row4 = (LinearLayout) getView().findViewById(R.id.row4);
+						for (int i=0; i < row1.getChildCount(); i++) {
+								View cv = row1.getChildAt(i);
+								if (cv instanceof Button) {
+										Button b = (Button) cv;
+										b.setOnClickListener(null);
+								}
+						}
+						for (int i=0; i < row2.getChildCount(); i++) {
+								View cv = row2.getChildAt(i);
+								if (cv instanceof Button) {
+										Button b = (Button) cv;
+										b.setOnClickListener(null);
+								}
+						}
+						for (int i=0; i < row3.getChildCount(); i++) {
+								View cv = row3.getChildAt(i);
+								if (cv instanceof Button) {
+										Button b = (Button) cv;
+										b.setOnClickListener(null);
+								}
+						}
+						for (int i=0; i < row4.getChildCount(); i++) {
+								View cv = row4.getChildAt(i);
+								if (cv instanceof Button) {
+										Button b = (Button) cv;
+										b.setOnClickListener(null);
+								}
+						}
+						row1.removeAllViews();
+						row2.removeAllViews();
+						row3.removeAllViews();
+						row4.removeAllViews();
+				}
+				System.gc();
+				System.gc();
+				System.gc();
 		}
 
 		@Override
@@ -177,6 +219,10 @@ public class EditorFragment extends Fragment implements View.OnClickListener {
 				super.onDestroy();
 				PostApplication.getRefWatcher(getActivity()).watch(this);
 				uHandler.removeCallbacksAndMessages(null);
+				
+				System.gc();
+				System.gc();
+				System.gc();
 		}
 
 		private void insertCode(String bc) {
@@ -187,9 +233,6 @@ public class EditorFragment extends Fragment implements View.OnClickListener {
 				code.getText().replace(Math.min(start, end), Math.max(start, end), bc, 0, bc.length());
 				code.setSelection(code.getSelectionEnd());
 				code.clearFocus();
-				if (lastPressed != null) {
-						lastPressed.requestFocus();
-				}
 				uHandler.postDelayed(uRunnable, 100);
 		}
 		private void deleteChar() {
@@ -200,29 +243,32 @@ public class EditorFragment extends Fragment implements View.OnClickListener {
 				code.getText().delete(Math.max(Math.min(start, end) - 1, 0), Math.max(start, end));
 				code.setSelection(code.getSelectionEnd());
 				code.clearFocus();
-				if (lastPressed != null) {
-						lastPressed.requestFocus();
-				}
 				uHandler.postDelayed(uRunnable, 100);
 		}
 
 		private final Handler uHandler = new Handler();
-		private final Runnable uRunnable = new Runnable() {
+		private final UpdLinesRunnable uRunnable = new UpdLinesRunnable();
+		static final class UpdLinesRunnable implements Runnable {
+				WeakReference<EditorFragment> fragment = new WeakReference<EditorFragment>(null);
 				@Override
 				public void run() {
-						final String t = code.getText().toString();
-						int lineCount = 1;
-						for (int i=0; i < t.length(); i++) {
-								final char c = t.charAt(i);
-								if (c == '\n') lineCount++;
+						final EditorFragment f = fragment.get();
+						if (f != null) {
+								final String t = f.code.getText().toString();
+								int lineCount = 1;
+								for (int i=0; i < t.length(); i++) {
+										final char c = t.charAt(i);
+										if (c == '\n') lineCount++;
+								}
+								final StringBuilder b = new StringBuilder();
+								for (int i=1; i <= lineCount; i++) {
+										b.append(i);
+										if (i != lineCount)
+												b.append("\n");
+								}
+								f.clines.setText(b);
+								PostApplication.code = f.code.getText().toString();
 						}
-						final StringBuilder b = new StringBuilder();
-						for (int i=1; i <= lineCount; i++) {
-								b.append(i);
-								if (i != lineCount)
-										b.append("\n");
-						}
-						clines.setText(b);
 				}
 		};
 

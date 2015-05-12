@@ -80,7 +80,7 @@ public class DebuggerFragment  extends Fragment implements MainActivity.OnBackPr
 								case R.id.btn_dbg_reset: {
 												if (VM.current.state.equals(VM.VMState.IDLE)) {
 														VM.current.debugMode = true;
-														VM.current.load(ma.code);
+														VM.current.load(PostApplication.code);
 														VM.current.cpos = 1;
 														VM.current.log("VM Started executing");
 														VM.current.state = VM.VMState.RUNNING;
@@ -145,7 +145,7 @@ public class DebuggerFragment  extends Fragment implements MainActivity.OnBackPr
 								return;
 						}
 						f.h.removeCallbacks(this);
-						final String sc = ((MainActivity) f.getActivity()).code;
+						final String sc = PostApplication.code;
 						final StringBuilder toLog = new StringBuilder();
 						ssb = new SpannableString(sc);
 						{
@@ -156,7 +156,7 @@ public class DebuggerFragment  extends Fragment implements MainActivity.OnBackPr
 												final IfOP iop = (IfOP) op;
 												int res = iop.conformsRegIF(iop.args[0]);
 												if (res == -1) {
-														final boolean isRight = VM.current.line[VM.current.cline];
+														final boolean isRight = VM.current.line.get(VM.current.cline, false);
 														res = isRight ? 1: 0;
 												}
 												if (res == 0) {

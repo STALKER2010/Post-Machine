@@ -13,6 +13,7 @@ public class PostApplication extends Application {
 		}
 
 		private RefWatcher refWatcher;
+		public static String code = "0\n>\n? 29 4\n>\n? 4\n>\n? 4\n<\n<\n0\n>\n? 11\n>\n? 13\n1\n<\n? 16\n<\n? 18\n1\n<\n? 10\n<\n? 23\n<\n? 23\n>\n> 1\n>\n0\n>\n? 31\n1\n>\n? 38 36\n<\n? 29 36\n!";
 
 		@Override public void onCreate() {
 				super.onCreate();
@@ -20,6 +21,10 @@ public class PostApplication extends Application {
 		}
 
 		protected RefWatcher installLeakCanary() {
-				return LeakCanary.install(this);
+				if (true) {
+						return RefWatcher.DISABLED;
+				} else {
+						return LeakCanary.install(this);
+				}
 		}
 }

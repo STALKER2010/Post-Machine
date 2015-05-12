@@ -22,18 +22,10 @@ public class OP implements Runnable {
 		public void shiftLeft() {
 				final VM v = VM.current;
 				v.cline--;
-				if (v.cline < 1) {
-						v.cline = 1;
-						PostLinter.lint.post("[warn] Left line limit exceeded");
-				}
 		}
 		public void shiftRight() {
 				final VM v = VM.current;
 				v.cline++;
-				if (v.cline > VM.VMOptions.LINE_LIMIT) {
-						v.cline = VM.VMOptions.LINE_LIMIT;
-						PostLinter.lint.post("[warn] Right line limit exceeded");
-				}
 		}
 		public void stop() {
 				final VM v = VM.current;
@@ -41,16 +33,16 @@ public class OP implements Runnable {
 		}
 		public void mark() {
 				final VM v = VM.current;
-				if (!v.line[v.cline]) {
-						v.line[v.cline] = true;
+				if (!v.line.get(v.cline, false)) {
+						v.line.append(v.cline, true);
 				} else {
 						PostLinter.lint.post("[perf] Cell is already 1");
 				}
 		}
 		public void unmark() {
 				final VM v = VM.current;
-				if (v.line[v.cline]) {
-						v.line[v.cline] = false;
+				if (v.line.get(v.cline, false)) {
+						v.line.delete(v.cline);
 				} else {
 						PostLinter.lint.post("[perf] Cell is already 0");
 				}

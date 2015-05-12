@@ -1,14 +1,15 @@
 package io.github.stalker2010.post;
 import java.util.*;
 import io.github.stalker2010.post.vm.*;
+import android.util.SparseBooleanArray;
 
 public final class VM {
-		public static final VM current = new VM().initialize();
+		public static final VM current = new VM();
 		public volatile int register = 0;
 		public final List<OP> code = new ArrayList<OP>();
-		public volatile boolean[] line = new boolean[0];
+		public volatile SparseBooleanArray line = new SparseBooleanArray(10);
 		public volatile int cpos = -1;
-		public volatile int cline = Math.round(VMOptions.LINE_LIMIT / 2);
+		public volatile int cline = 0;
 		public volatile VMState state = VMState.IDLE;
 		volatile boolean stopFlag = false;
 		public volatile boolean debugMode = false;
@@ -16,7 +17,6 @@ public final class VM {
 		public volatile String latestLine = "";
 		public static final class VMOptions {
 				public static final int OP_LIMIT = 10000;
-				public static final int LINE_LIMIT = 1000;
 		}
 		public final List<OnVMStateChange> callbacks = new ArrayList<OnVMStateChange>();
 		public static interface OnVMStateChange {
@@ -27,12 +27,6 @@ public final class VM {
 		}
 		public VM() {
 				log("VM Created");
-		}
-		public VM initialize() {
-				if (line.length != (VMOptions.LINE_LIMIT + 1)) {
-						line = new boolean[VMOptions.LINE_LIMIT + 1];
-				}
-				return this;
 		}
 		public boolean run() {
 				if (!state.equals(VMState.IDLE)) return false;
@@ -85,7 +79,6 @@ public final class VM {
 				cpos = -1;
 				register = 0;
 				PostLinter.lint.messages.clear();
-				initialize();
 				code.clear();
 				code.add(null);
 				boolean containsStop = false;
@@ -138,9 +131,7 @@ public final class VM {
 						StringBuilder ll = new StringBuilder();
 						ll.append((cprev) + ": ");
 						for (int i=cline - 10; i <= cline + 8; i++) {
-								if ((i > 0) && (i < line.length)) {
-										ll.append(line[i] ?"1": "0");
-								}
+								ll.append(line.get(i, false)?"1": "0");
 						}
 						log(ll.toString());
 				}

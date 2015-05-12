@@ -84,7 +84,7 @@ public class IfOP extends OP {
 						}
 				} else {
 						if (cfms == -1) {
-								final boolean isRight = VM.current.line[VM.current.cline];
+								final boolean isRight = VM.current.line.get(VM.current.cline, false);
 								final Integer firstVariant = Integer.valueOf(args[0]);
 								if (as == 1) {
 										return isRight ? firstVariant: -1;

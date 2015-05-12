@@ -44,25 +44,16 @@ public class LineFragment extends Fragment implements MainActivity.OnBackPressed
 
 		private void set(int diff, boolean state) {
 				try {
-						VM.current.line[VM.current.cline + diff] = state;
+						VM.current.line.append(VM.current.cline + diff, state);
 				} catch (IndexOutOfBoundsException e) {
 				}
 		}
 		private boolean get(int diff) {
-				try {
-						return VM.current.line[VM.current.cline + diff];
-				} catch (IndexOutOfBoundsException e) {
-						e.printStackTrace();
-				}
-				return false;
+				return VM.current.line.get(VM.current.cline + diff, false);
 		}
 		public void load() {
 				for (int i=-12; i <= 12; i++) {
-						try {
-								setCell(diff_id(i), VM.current.line[VM.current.cline + i]);
-						} catch (IndexOutOfBoundsException e) {
-								PostLinter.lint.post("[warn] Line edges are slow places", -1);
-						}
+						setCell(diff_id(i), get(i));
 				}
 				setCellCaret(diff_id(0));
 		}
@@ -143,14 +134,6 @@ public class LineFragment extends Fragment implements MainActivity.OnBackPressed
 				final int d = p1.getId();
 				if (d != View.NO_ID) {
 						VM.current.cline += id_diff(d);
-						if (VM.current.cline < 1) {
-								VM.current.cline = 1;
-								PostLinter.lint.post("[warn] Left line limit exceeded");
-						}
-						if (VM.current.cline > VM.VMOptions.LINE_LIMIT) {
-								VM.current.cline = VM.VMOptions.LINE_LIMIT;
-								PostLinter.lint.post("[warn] Right line limit exceeded");
-						}
 						load();
 						return true;
 				} else {
