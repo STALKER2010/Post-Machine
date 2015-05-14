@@ -1,7 +1,9 @@
 package io.github.stalker2010.post;
-import java.util.*;
 import io.github.stalker2010.post.vm.*;
-import android.util.SparseBooleanArray;
+
+import io.github.stalker2010.post.compat.SparseBooleanArray;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class VM {
 		public static final VM current = new VM();
@@ -44,6 +46,7 @@ public final class VM {
 				return continueRun();
 		}
 		public boolean continueRun() {
+				line.constantModifications = true;
 				int i = -1;
 				while (i < VMOptions.OP_LIMIT) {
 						i++;
@@ -53,6 +56,7 @@ public final class VM {
 										c.onVMStateChange(state);
 								}
 								log("VM Interrupted");
+								line.constantModifications = false;
 								state = VMState.IDLE;
 								return false;
 						}
@@ -62,6 +66,7 @@ public final class VM {
 										c.onVMStateChange(state);
 								}
 								stopFlag = false;
+								line.constantModifications = false;
 								log("VM Ran OK");
 								state = VMState.IDLE;
 								return true;
