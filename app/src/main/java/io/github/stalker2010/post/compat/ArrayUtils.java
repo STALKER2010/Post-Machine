@@ -73,7 +73,7 @@ public class ArrayUtils
      */
     public static boolean equals(byte[] array1, byte[] array2, int length) {
         if (length < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("length can't be less than zero");
         }
 
         if (array1 == array2) {

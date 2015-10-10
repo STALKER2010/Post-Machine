@@ -44,10 +44,11 @@ package io.github.stalker2010.post.compat;
  * keys in ascending order, or the values corresponding to the keys in ascending
  * order in the case of <code>valueAt(int)</code>.</p>
  */
-public class SparseArray<E> implements Cloneable {
+public class SparseArray<E> implements Cloneable
+{
     private static final Object DELETED = new Object();
     private boolean mGarbage = false;
-		public volatile boolean constantModifications = false;
+	public volatile boolean constantModifications = false;
 
     private int[] mKeys;
     private Object[] mValues;
@@ -56,7 +57,8 @@ public class SparseArray<E> implements Cloneable {
     /**
      * Creates a new SparseArray containing no mappings.
      */
-    public SparseArray() {
+    public SparseArray()
+	{
         this(10);
     }
 
@@ -67,11 +69,15 @@ public class SparseArray<E> implements Cloneable {
      * sparse array will be initialized with a light-weight representation
      * not requiring any additional array allocations.
      */
-    public SparseArray(int initialCapacity) {
-        if (initialCapacity == 0) {
+    public SparseArray(int initialCapacity)
+	{
+        if (initialCapacity == 0)
+		{
             mKeys = new int[0];
             mValues = new Object[0];
-        } else {
+        }
+		else
+		{
             mValues = ArrayUtils.newUnpaddedObjectArray(initialCapacity);
             mKeys = new int[mValues.length];
         }
@@ -80,13 +86,17 @@ public class SparseArray<E> implements Cloneable {
 
     @Override
     @SuppressWarnings("unchecked")
-    public SparseArray<E> clone() {
+    public SparseArray<E> clone()
+	{
         SparseArray<E> clone = null;
-        try {
+        try
+		{
             clone = (SparseArray<E>) super.clone();
             clone.mKeys = mKeys.clone();
             clone.mValues = mValues.clone();
-        } catch (CloneNotSupportedException cnse) {
+        }
+		catch (CloneNotSupportedException cnse)
+		{
             /* ignore */
         }
         return clone;
@@ -96,7 +106,8 @@ public class SparseArray<E> implements Cloneable {
      * Gets the Object mapped from the specified key, or <code>null</code>
      * if no such mapping has been made.
      */
-    public E get(int key) {
+    public E get(int key)
+	{
         return get(key, null);
     }
 
@@ -105,12 +116,16 @@ public class SparseArray<E> implements Cloneable {
      * if no such mapping has been made.
      */
     @SuppressWarnings("unchecked")
-    public E get(int key, E valueIfKeyNotFound) {
+    public E get(int key, E valueIfKeyNotFound)
+	{
         int i = ContainerHelpers.binarySearch(mKeys, mSize, key);
 
-        if (i < 0 || mValues[i] == DELETED) {
+        if (i < 0 || mValues[i] == DELETED)
+		{
             return valueIfKeyNotFound;
-        } else {
+        }
+		else
+		{
             return (E) mValues[i];
         }
     }
@@ -118,11 +133,14 @@ public class SparseArray<E> implements Cloneable {
     /**
      * Removes the mapping from the specified key, if there was any.
      */
-    public void delete(int key) {
+    public void delete(int key)
+	{
         int i = ContainerHelpers.binarySearch(mKeys, mSize, key);
 
-        if (i >= 0) {
-            if (mValues[i] != DELETED) {
+        if (i >= 0)
+		{
+            if (mValues[i] != DELETED)
+			{
                 mValues[i] = DELETED;
                 mGarbage = true;
             }
@@ -132,15 +150,18 @@ public class SparseArray<E> implements Cloneable {
     /**
      * Alias for {@link #delete(int)}.
      */
-    public void remove(int key) {
+    public void remove(int key)
+	{
         delete(key);
     }
 
     /**
      * Removes the mapping at the specified index.
      */
-    public void removeAt(int index) {
-        if (mValues[index] != DELETED) {
+    public void removeAt(int index)
+	{
+        if (mValues[index] != DELETED)
+		{
             mValues[index] = DELETED;
             mGarbage = true;
         }
@@ -152,27 +173,33 @@ public class SparseArray<E> implements Cloneable {
      * @param index Index to begin at
      * @param size Number of mappings to remove
      */
-    public void removeAtRange(int index, int size) {
+    public void removeAtRange(int index, int size)
+	{
         final int end = Math.min(mSize, index + size);
-        for (int i = index; i < end; i++) {
+        for (int i = index; i < end; i++)
+		{
             removeAt(i);
         }
     }
 
-    private void gc() {
+    private void gc()
+	{
         // Log.e("SparseArray", "gc start with " + mSize);
-				if (constantModifications) return;
+		if (constantModifications) return;
 
         int n = mSize;
         int o = 0;
         int[] keys = mKeys;
         Object[] values = mValues;
 
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < n; i++)
+		{
             Object val = values[i];
 
-            if (val != DELETED) {
-                if (i != o) {
+            if (val != DELETED)
+			{
+                if (i != o)
+				{
                     keys[o] = keys[i];
                     values[o] = val;
                     values[i] = null;
@@ -193,21 +220,27 @@ public class SparseArray<E> implements Cloneable {
      * replacing the previous mapping from the specified key if there
      * was one.
      */
-    public void put(int key, E value) {
+    public void put(int key, E value)
+	{
         int i = ContainerHelpers.binarySearch(mKeys, mSize, key);
 
-        if (i >= 0) {
+        if (i >= 0)
+		{
             mValues[i] = value;
-        } else {
+        }
+		else
+		{
             i = ~i;
 
-            if (i < mSize && mValues[i] == DELETED) {
+            if (i < mSize && mValues[i] == DELETED)
+			{
                 mKeys[i] = key;
                 mValues[i] = value;
                 return;
             }
 
-            if (mGarbage && mSize >= mKeys.length) {
+            if (mGarbage && mSize >= mKeys.length)
+			{
                 gc();
 
                 // Search again because indices may have changed.
@@ -224,8 +257,10 @@ public class SparseArray<E> implements Cloneable {
      * Returns the number of key-value mappings that this SparseArray
      * currently stores.
      */
-    public int size() {
-        if (mGarbage) {
+    public int size()
+	{
+        if (mGarbage)
+		{
             gc();
         }
 
@@ -242,8 +277,10 @@ public class SparseArray<E> implements Cloneable {
      * smallest key and <code>keyAt(size()-1)</code> will return the largest
      * key.</p>
      */
-    public int keyAt(int index) {
-        if (mGarbage) {
+    public int keyAt(int index)
+	{
+        if (mGarbage)
+		{
             gc();
         }
 
@@ -262,8 +299,10 @@ public class SparseArray<E> implements Cloneable {
      * associated with the largest key.</p>
      */
     @SuppressWarnings("unchecked")
-    public E valueAt(int index) {
-        if (mGarbage) {
+    public E valueAt(int index)
+	{
+        if (mGarbage)
+		{
             gc();
         }
 
@@ -275,8 +314,10 @@ public class SparseArray<E> implements Cloneable {
      * value for the <code>index</code>th key-value mapping that this
      * SparseArray stores.
      */
-    public void setValueAt(int index, E value) {
-        if (mGarbage) {
+    public void setValueAt(int index, E value)
+	{
+        if (mGarbage)
+		{
             gc();
         }
 
@@ -288,8 +329,10 @@ public class SparseArray<E> implements Cloneable {
      * specified key, or a negative number if the specified
      * key is not mapped.
      */
-    public int indexOfKey(int key) {
-        if (mGarbage) {
+    public int indexOfKey(int key)
+	{
+        if (mGarbage)
+		{
             gc();
         }
 
@@ -306,8 +349,10 @@ public class SparseArray<E> implements Cloneable {
      * <p>Note also that unlike most collections' {@code indexOf} methods,
      * this method compares values using {@code ==} rather than {@code equals}.
      */
-    public int indexOfValue(E value) {
-        if (mGarbage) {
+    public int indexOfValue(E value)
+	{
+        if (mGarbage)
+		{
             gc();
         }
 
@@ -321,12 +366,13 @@ public class SparseArray<E> implements Cloneable {
     /**
      * Removes all key-value mappings from this SparseArray.
      */
-    public void clear() {
+    public void clear()
+	{
         int n = mSize;
-        Object[] values = mValues;
 
-        for (int i = 0; i < n; i++) {
-            values[i] = null;
+        for (int i = 0; i < n; i++)
+		{
+            mValues[i] = null;
         }
 
         mSize = 0;
@@ -337,13 +383,16 @@ public class SparseArray<E> implements Cloneable {
      * Puts a key/value pair into the array, optimizing for the case where
      * the key is greater than all existing keys in the array.
      */
-    public void append(int key, E value) {
-        if (mSize != 0 && key <= mKeys[mSize - 1]) {
+    public void append(int key, E value)
+	{
+        if (mSize != 0 && key <= mKeys[mSize - 1])
+		{
             put(key, value);
             return;
         }
 
-        if (mGarbage && mSize >= mKeys.length) {
+        if (mGarbage && mSize >= mKeys.length)
+		{
             gc();
         }
 
@@ -351,6 +400,30 @@ public class SparseArray<E> implements Cloneable {
         mValues = GrowingArrayUtils.append(mValues, mSize, value);
         mSize++;
     }
+
+	public void sort()
+	{
+		boolean changed = true;
+		int minus = 1;
+		while (changed)
+		{
+			changed = false;
+			for (int i=0; i < Math.max(0, size() - minus); i++)
+			{
+				int key = mKeys[i];
+				if (key > mKeys[i + 1])
+				{
+					changed = true;
+					Object o = mValues[i];
+					mKeys[i] = mKeys[i + 1];
+					mValues[i] = mValues[i + 1];
+					mKeys[i + 1] = key;
+					mValues[i + 1] = o;
+				}
+				minus++;
+			}
+		}
+	}
 
     /**
      * {@inheritDoc}
@@ -360,24 +433,31 @@ public class SparseArray<E> implements Cloneable {
      * will appear in its place.
      */
     @Override
-    public String toString() {
-        if (size() <= 0) {
+    public String toString()
+	{
+        if (size() <= 0)
+		{
             return "{}";
         }
 
         StringBuilder buffer = new StringBuilder(mSize * 28);
         buffer.append('{');
-        for (int i=0; i<mSize; i++) {
-            if (i > 0) {
+        for (int i=0; i < mSize; i++)
+		{
+            if (i > 0)
+			{
                 buffer.append(", ");
             }
             int key = keyAt(i);
             buffer.append(key);
             buffer.append('=');
             Object value = valueAt(i);
-            if (value != this) {
+            if (value != this)
+			{
                 buffer.append(value);
-            } else {
+            }
+			else
+			{
                 buffer.append("(this Map)");
             }
         }
