@@ -1,5 +1,6 @@
 package io.github.stalker2010.post.vm;
 import java.lang.ref.*;
+import static io.github.stalker2010.post.PostApplication.current;
 
 public class OP implements Runnable
 {
@@ -50,7 +51,7 @@ public class OP implements Runnable
 		}
 		else
 		{
-			PostLinter.current().post("[perf] Cell is already 1");
+			current().linter.post("[perf] Cell is already 1");
 		}
 	}
 	public void unmark()
@@ -62,7 +63,7 @@ public class OP implements Runnable
 		}
 		else
 		{
-			PostLinter.current().post("[perf] Cell is already 0");
+			current().linter.post("[perf] Cell is already 0");
 		}
 	}
 	public void registerAdd()
@@ -89,7 +90,7 @@ public class OP implements Runnable
 		final VM v = vm.get();
 		if (v.cpos == id)
 		{
-			PostLinter.current().post("[warn] GoTo the same line. Will fall into infinite cycle. Went to next line instead.");
+			current().linter.post("[warn] GoTo the same line. Will fall into infinite cycle. Went to next line instead.");
 			v.cpos++;
 		}
 		else
@@ -139,7 +140,7 @@ public class OP implements Runnable
 			catch (NumberFormatException e)
 			{
 				e.printStackTrace();
-				PostLinter.current().post("[error] Next line number is not a number");
+				current().linter.post("[error] Next line number is not a number");
 				vm.get().interruptVM();
 			}
 		}

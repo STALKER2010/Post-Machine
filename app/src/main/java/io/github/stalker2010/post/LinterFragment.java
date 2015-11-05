@@ -1,14 +1,23 @@
 package io.github.stalker2010.post;
-import android.app.*;
+
 import android.os.*;
+import android.support.v4.app.*;
 import android.view.*;
 import android.widget.*;
 import io.github.stalker2010.post.vm.*;
 import java.lang.ref.*;
+
 import static io.github.stalker2010.post.PostApplication.*;
 
-public class LinterFragment extends Fragment implements VM.OnVMStateChange, MainActivity.OnBackPressedListener
+public class LinterFragment extends BaseFragment implements VM.OnVMStateChange, MainActivity.OnBackPressedListener
 {
+
+	@Override
+	public int viewID()
+	{
+		return R.layout.linter;
+	}
+	
 	
 	@Override
 	public void onVMStateChange(VM.VMState state)
@@ -21,14 +30,14 @@ public class LinterFragment extends Fragment implements VM.OnVMStateChange, Main
 	ListView list;
 	LintAdapter adapter = new LintAdapter(this);
 	public volatile boolean fromDebugger = false;
+
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	public void initView()
 	{
-		View v = inflater.inflate(R.layout.linter, container, false);
-		list = (ListView) v.findViewById(R.id.linter_list);
+		super.initView();
+		list = byId(R.id.linter_list);
 		list.setAdapter(adapter);
-		current().callbacks.add(this);
-		return v;
+		current().vm.callbacks.add(this);
 	}
 
 	@Override
@@ -60,13 +69,13 @@ public class LinterFragment extends Fragment implements VM.OnVMStateChange, Main
 		@Override
 		public int getCount()
 		{
-			return currentDoc().linter.messages.size();
+			return current().linter.messages.size();
 		}
 
 		@Override
 		public PostLinter.LintMessage getItem(int p1)
 		{
-			return currentDoc().linter.messages.get(p1);
+			return current().linter.messages.get(p1);
 		}
 
 		@Override

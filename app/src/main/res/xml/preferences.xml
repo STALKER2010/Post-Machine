@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	<PreferenceCategory
+		android:title="Engines">
+		<ListPreference
+			android:key="engine_run"
+			android:title="Run mode"
+			android:summary="Engine to be used with Run mode"
+			android:entries="@array/engines"
+			android:entryValues="@array/engines_values"
+			android:dialogTitle="Run mode"/>
+		<ListPreference
+			android:key="engine_debug"
+			android:title="Debug mode"
+			android:summary="Engine to be used with Debug mode"
+			android:entries="@array/engines"
+			android:entryValues="@array/engines_values"
+			android:dialogTitle="Debug mode"/>
+	</PreferenceCategory>
+</PreferenceScreen>

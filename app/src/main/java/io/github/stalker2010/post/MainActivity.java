@@ -1,14 +1,18 @@
 package io.github.stalker2010.post;
 
-import android.app.*;
-import android.os.*;
-import android.view.*;
-import io.github.stalker2010.post.vm.*;
-import android.widget.*;
 import android.database.*;
-import static io.github.stalker2010.post.PostApplication.*;
+import android.os.*;
+import android.support.v4.app.*;
+import android.support.v7.app.*;
+import android.view.*;
+import android.widget.*;
+import io.github.stalker2010.post.vm.*;
 
-public class MainActivity extends Activity
+import static io.github.stalker2010.post.PostApplication.*;
+import android.content.*;
+import android.preference.*;
+
+public class MainActivity extends AppCompatActivity
 {
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -20,8 +24,8 @@ public class MainActivity extends Activity
 		}
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-		getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-		getActionBar().setListNavigationCallbacks(new DocSpinnerAdapter(), new ActionBar.OnNavigationListener() {
+		getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+		getSupportActionBar().setListNavigationCallbacks(new DocSpinnerAdapter(), new ActionBar.OnNavigationListener() {
 				@Override
 				public boolean onNavigationItemSelected(int p1, long p2)
 				{
@@ -29,9 +33,13 @@ public class MainActivity extends Activity
 					return false;
 				}
 			});
-		if (savedInstanceState == null)
-		{
-			setFragment(new EditorFragment());
+		setFragment(new EditorFragment());
+		if (savedInstanceState == null) {
+			SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(this);
+			if (!p.getBoolean("intro_shown", false)) {
+				Intent i = new Intent(this, PostIntroActivity.class);
+				startActivity(i);
+			}
 		}
     }
 
@@ -40,28 +48,53 @@ public class MainActivity extends Activity
 		boolean onBackPressed(final MainActivity ma);
 	}
 
-	private MenuItem reset;
+	private MenuItem reset, prefs, open, save;
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
-		getMenuInflater().inflate(R.menu.lines, menu);
-		reset = menu.findItem(R.id.reset);
+		getMenuInflater().inflate(R.menu.menu, menu);
+		reset = menu.findItem(R.id.menu_reset);
+		reset.setVisible(false);
+		prefs = menu.findItem(R.id.menu_prefs);
+		open = menu.findItem(R.id.menu_open);
+		save = menu.findItem(R.id.menu_save);
 		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-		if (item.getItemId() == R.id.reset)
+		int itemId = item.getItemId();
+		if (itemId == R.id.menu_reset)
 		{
-			current().line.clear();
-			current().cline = 0;
+			current().vm.line.clear();
+			current().vm.cline = 0;
 			if (fragment instanceof LineFragment)
 			{
 				final LineFragment lf = (LineFragment) fragment;
 				lf.load();
 			}
 			return true;
+		}
+		if (itemId == R.id.menu_prefs)
+		{
+			setFragment(new PrefsFragment());
+			return true;
+		}
+		if (itemId == R.id.menu_open) {
+			current().vm.stopVM();
+			setFragment(new OpenFragment());
+			return true;
+		}
+		if (itemId == R.id.menu_save) {
+			if (current().file != null) {
+				if (!current().saveToFile()) {
+					Toast.makeText(this, "Failed to save to file", Toast.LENGTH_LONG).show();
+				}
+			} else {
+				DialogFragment fr = new SaveDialogFragment();
+				fr.show(getSupportFragmentManager(), "save_dialog");
+			}
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -79,9 +112,9 @@ public class MainActivity extends Activity
 				}
 			}
 		}
-		if (current().state.equals(VM.VMState.RUNNING))
+		if (current().vm.state.equals(VM.VMState.RUNNING))
 		{
-			current().interruptVM();
+			current().vm.interruptVM();
 			return;
 		}
 		super.onBackPressed();
@@ -91,7 +124,7 @@ public class MainActivity extends Activity
 	private volatile Fragment fragment = null;
 	public synchronized void setFragment(final Fragment f)
 	{
-		final FragmentTransaction t = getFragmentManager().beginTransaction();
+		final FragmentTransaction t = getSupportFragmentManager().beginTransaction();
 		t.replace(R.id.container, f);
 		t.commit();
 		fragment = f;
@@ -104,6 +137,39 @@ public class MainActivity extends Activity
 			else
 			{
 				reset.setVisible(false);
+			}
+		}
+		if (prefs != null)
+		{
+			if (f instanceof EditorFragment)
+			{
+				prefs.setVisible(true);
+			}
+			else
+			{
+				prefs.setVisible(false);
+			}
+		}
+		if (open != null)
+		{
+			if (f instanceof EditorFragment)
+			{
+				open.setVisible(true);
+			}
+			else
+			{
+				open.setVisible(false);
+			}
+		}
+		if (save != null)
+		{
+			if (f instanceof EditorFragment)
+			{
+				save.setVisible(true);
+			}
+			else
+			{
+				save.setVisible(false);
 			}
 		}
 	}

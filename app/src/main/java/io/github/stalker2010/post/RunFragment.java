@@ -1,14 +1,23 @@
 package io.github.stalker2010.post;
-import android.app.*;
+
 import android.os.*;
+import android.support.v4.app.*;
 import android.view.*;
 import android.widget.*;
 import io.github.stalker2010.post.vm.*;
 import java.lang.ref.*;
+
 import static io.github.stalker2010.post.PostApplication.*;
 
-public class RunFragment extends Fragment implements MainActivity.OnBackPressedListener, VM.OnVMStateChange
+public class RunFragment extends BaseFragment implements MainActivity.OnBackPressedListener, VM.OnVMStateChange
 {
+
+	@Override
+	public int viewID()
+	{
+		return R.layout.log;
+	}
+	
 	@Override
 	public void onVMStateChange(VM.VMState state)
 	{
@@ -24,15 +33,15 @@ public class RunFragment extends Fragment implements MainActivity.OnBackPressedL
 	private static final int updInterval = 500;
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	public void initView()
 	{
-		View v = inflater.inflate(R.layout.log, container, false);
-		lg = (TextView) v.findViewById(R.id.tv_log);
-		pb = (ProgressBar) v.findViewById(R.id.pb_log);
+		super.initView();
+		lg = byId(R.id.tv_log);
+		pb = byId(R.id.pb_log);
 		pb.setVisibility(View.VISIBLE);
 		ui.start();
-		return v;
 	}
+
 	@Override
 	public void onResume()
 	{
@@ -87,7 +96,7 @@ public class RunFragment extends Fragment implements MainActivity.OnBackPressedL
 				return;
 			}
 			f.h.removeCallbacks(this);
-			final CharSequence s = current().log.toString();
+			final CharSequence s = current().vm.log.toString();
 			if (!s.equals(prev))
 			{
 				f.lg.setText(s);
@@ -109,13 +118,13 @@ public class RunFragment extends Fragment implements MainActivity.OnBackPressedL
 			@Override
 			public void run()
 			{
-				if (current().state.equals(VM.VMState.IDLE))
+				if (current().vm.state.equals(VM.VMState.IDLE))
 				{
-					current().run();
+					current().vm.run();
 				}
 				else
 				{
-					current().continueRun();
+					current().vm.continueRun();
 				}
 			}
 		}

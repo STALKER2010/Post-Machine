@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import io.github.stalker2010.post.compat.SparseArray;
 import io.github.stalker2010.post.compat.*;
+import static io.github.stalker2010.post.PostApplication.current;
 
 public final class VM
 {
@@ -150,7 +151,7 @@ public final class VM
 				}
 				else
 				{
-					PostLinter.current().post("[error] Unknown OP: " + op);
+					current().linter.post("[error] Unknown OP: " + op);
 				}
 				curl++;
 			}
@@ -159,7 +160,7 @@ public final class VM
 		if (log) log("VM Loaded code");
 		if (!containsStop)
 		{
-			PostLinter.current().post("[error] No stop statement.");
+			current().linter.post("[error] No stop statement.");
 		}
 		state = prev;
 		for (final OnVMStateChange c: callbacks)
@@ -174,7 +175,7 @@ public final class VM
 			final int cs = code.size();
 			if ((cs <= cpos) || (cpos < 0))
 			{
-				PostLinter.current().post("[error] No such line defined");
+				current().linter.post("[error] No such line defined");
 				interruptVM();
 				return;
 			}
@@ -183,7 +184,7 @@ public final class VM
 		if (!cur.isCorrect())
 		{
 			log("OP:" + cpos + ": incorrect");
-			PostLinter.current().post("[error] OP incorrect");
+			current().linter.post("[error] OP incorrect");
 			interruptVM();
 			return;
 		}

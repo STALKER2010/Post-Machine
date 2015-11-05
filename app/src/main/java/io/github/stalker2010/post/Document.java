@@ -23,45 +23,27 @@ public class Document implements Closeable, Serializable
 		linter = null;
 		file = null;
 	}
-	public boolean write() {
-		if (file == null) {
-			return false;
-		}
-		try
-		{
-			FileWriter w = new FileWriter(file);
-			w.append(vm.writeCode());
-			w.flush();
-			w.close();
-			return true;
-		}
-		catch (IOException e)
-		{
-			return false;
-		}
-	}
-	public boolean read() {
-		if (file == null) {
-			return false;
-		}
-		try
-		{
-			Scanner s = new Scanner(file);
-			StringBuilder b = new StringBuilder();
-			while (s.hasNextLine()) {
-				b = b.append(s.nextLine()).append("\n");
-			}
-			vm.load(b.toString(), false);
-			return true;
-		}
-		catch (IOException e)
-		{
-			return false;
-		}
-	}
 	public void setFile(File f) {
 		file = f;
 		name = f.getName();
+	}
+	public boolean loadFromFile() {
+		if (file == null) {
+			return false;
+		}
+		String res = StorageUtils.get().read(name);
+		if (res == null) {
+			return false;
+		}
+		vm.load(res, false);
+		return true;
+	}
+	public boolean saveToFile() {
+		if (file == null) {
+			return false;
+		}
+		String code = vm.writeCode();
+		return StorageUtils.get().save(name, code);
 	}
 	
 }

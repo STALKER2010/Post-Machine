@@ -1,5 +1,7 @@
 package io.github.stalker2010.post.vm;
 
+import static io.github.stalker2010.post.PostApplication.current;
+
 public class IfOP extends OP
 {
 	public IfOP(final VM vm, final String op, final String[] args)
@@ -52,7 +54,7 @@ public class IfOP extends OP
 		catch (NumberFormatException e)
 		{
 			e.printStackTrace();
-			PostLinter.current().post("[error] Wrong IF condition number");
+			current().linter.post("[error] Wrong IF condition number");
 			vm.get().interruptVM();
 			return -1;
 		}
@@ -70,7 +72,7 @@ public class IfOP extends OP
 					}
 					else
 					{
-						PostLinter.current().post("[hint] It equals. Maybe, you want <=?");
+						current().linter.post("[hint] It equals. Maybe, you want <=?");
 					}
 				}
 				return (reg < l) ?1: 0;
@@ -83,7 +85,7 @@ public class IfOP extends OP
 					}
 					else
 					{
-						PostLinter.current().post("[hint] It equals. Maybe, you want >=?");
+						current().linter.post("[hint] It equals. Maybe, you want >=?");
 					}
 				}
 				return (reg > l) ?1: 0;
@@ -113,7 +115,7 @@ public class IfOP extends OP
 			}
 			else
 			{
-				PostLinter.current().post("[error] Unexpected IF branch in IFOp");
+				current().linter.post("[error] Unexpected IF branch in IFOp");
 				vm.get().interruptVM();
 				return -1;
 			}

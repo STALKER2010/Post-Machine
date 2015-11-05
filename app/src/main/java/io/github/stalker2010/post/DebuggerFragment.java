@@ -1,18 +1,26 @@
 package io.github.stalker2010.post;
 
-import android.app.*;
 import android.graphics.*;
 import android.os.*;
+import android.support.v4.app.*;
 import android.text.*;
 import android.text.style.*;
 import android.view.*;
 import android.widget.*;
 import io.github.stalker2010.post.vm.*;
 import java.lang.ref.*;
+
 import static io.github.stalker2010.post.PostApplication.*;
 
-public class DebuggerFragment extends Fragment implements MainActivity.OnBackPressedListener, VM.OnVMStateChange, View.OnClickListener
+public class DebuggerFragment extends BaseFragment implements MainActivity.OnBackPressedListener, VM.OnVMStateChange, View.OnClickListener
 {
+
+	@Override
+	public int viewID()
+	{
+		return R.layout.debugger;
+	}
+	
 	@Override
 	public void onVMStateChange(VM.VMState state)
 	{
@@ -24,25 +32,25 @@ public class DebuggerFragment extends Fragment implements MainActivity.OnBackPre
 	private static final int updInterval = 5000;
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	public void initView()
 	{
-		View v = inflater.inflate(R.layout.debugger, container, false);
-		vm_state = (TextView) v.findViewById(R.id.dbg_vmstate);
-		code = (TextView) v.findViewById(R.id.dbgCode);
-		clines = (TextView) v.findViewById(R.id.dbgCodeLines);
-		reg = (TextView) v.findViewById(R.id.dbg_reg);
-		log = (TextView) v.findViewById(R.id.dbg_log);
-		reg_row = v.findViewById(R.id.dbg_reg_row);
-		final Button btn_reset = (Button) v.findViewById(R.id.btn_dbg_reset);
-		final Button btn_step = (Button) v.findViewById(R.id.btn_dbg_step);
-		final Button btn_line = (Button) v.findViewById(R.id.btn_dbg_line);
-		final Button btn_lint = (Button) v.findViewById(R.id.btn_dbg_lint);
+		super.initView();
+		vm_state = byId(R.id.dbg_vmstate);
+		code = byId(R.id.dbgCode);
+		clines = byId(R.id.dbgCodeLines);
+		reg = byId(R.id.dbg_reg);
+		log = byId(R.id.dbg_log);
+		reg_row = byId(R.id.dbg_reg_row);
+		final Button btn_reset = byId(R.id.btn_dbg_reset);
+		final Button btn_step = byId(R.id.btn_dbg_step);
+		final Button btn_line = byId(R.id.btn_dbg_line);
+		final Button btn_lint = byId(R.id.btn_dbg_lint);
 		btn_reset.setOnClickListener(this);
 		btn_step.setOnClickListener(this);
 		btn_line.setOnClickListener(this);
 		btn_lint.setOnClickListener(this);
-		return v;
 	}
+
 	@Override
 	public void onResume()
 	{
@@ -80,44 +88,44 @@ public class DebuggerFragment extends Fragment implements MainActivity.OnBackPre
 			switch (d)
 			{
 				case R.id.btn_dbg_reset: {
-						if (current().state.equals(VM.VMState.IDLE))
+						if (current().vm.state.equals(VM.VMState.IDLE))
 						{
-							currentDoc().linter.messages.clear();
-							current().reset().load(PostApplication.code, true);
-							current().debugMode = true;
-							PostApplication.code = current().writeCode();
-							current().cpos = 1;
-							current().log("VM Started executing");
-							current().state = VM.VMState.RUNNING;
+							current().linter.messages.clear();
+							current().vm.reset().load(PostApplication.code, true);
+							current().vm.debugMode = true;
+							PostApplication.code = current().vm.writeCode();
+							current().vm.cpos = 1;
+							current().vm.log("VM Started executing");
+							current().vm.state = VM.VMState.RUNNING;
 						}
 						break;
 					}
 				case R.id.btn_dbg_step: {
-						if (current().debugMode)
+						if (current().vm.debugMode)
 						{
-							current().runLine();
-							if (current().state.equals(VM.VMState.INTERRUPTED))
+							current().vm.runLine();
+							if (current().vm.state.equals(VM.VMState.INTERRUPTED))
 							{
-								for (final VM.OnVMStateChange c: current().callbacks)
+								for (final VM.OnVMStateChange c: current().vm.callbacks)
 								{
-									c.onVMStateChange(current().state);
+									c.onVMStateChange(current().vm.state);
 								}
-								current().debugMode = false;
-								current().log("VM Interrupted");
-								current().state = VM.VMState.IDLE;
+								current().vm.debugMode = false;
+								current().vm.log("VM Interrupted");
+								current().vm.state = VM.VMState.IDLE;
 							}
-							if (current().stopFlag)
+							if (current().vm.stopFlag)
 							{
-								current().state = VM.VMState.FINISHING;
-								for (final VM.OnVMStateChange c: current().callbacks)
+								current().vm.state = VM.VMState.FINISHING;
+								for (final VM.OnVMStateChange c: current().vm.callbacks)
 								{
-									c.onVMStateChange(current().state);
+									c.onVMStateChange(current().vm.state);
 								}
-								current().stopFlag = false;
-								current().cpos = -1;
-								current().debugMode = false;
-								current().log("VM Ran OK");
-								current().state = VM.VMState.IDLE;
+								current().vm.stopFlag = false;
+								current().vm.cpos = -1;
+								current().vm.debugMode = false;
+								current().vm.log("VM Ran OK");
+								current().vm.state = VM.VMState.IDLE;
 							}
 						}
 						break;
@@ -163,7 +171,7 @@ public class DebuggerFragment extends Fragment implements MainActivity.OnBackPre
 			final StringBuilder toLog = new StringBuilder();
 			ssb = new SpannableString(sc);
 			{
-				final OP op = current().getCurrentOP();
+				final OP op = current().vm.getCurrentOP();
 				if (op != null)
 				{
 					int color = Color.argb(210, 51, 181, 229);
@@ -173,7 +181,7 @@ public class DebuggerFragment extends Fragment implements MainActivity.OnBackPre
 						int res = iop.conformsRegIF(iop.args[0]);
 						if (res == -1)
 						{
-							final boolean isRight = current().line.get(current().cline);
+							final boolean isRight = current().vm.line.get(current().vm.cline);
 							res = isRight ? 1: 0;
 						}
 						if (res == 0)
@@ -185,10 +193,10 @@ public class DebuggerFragment extends Fragment implements MainActivity.OnBackPre
 							color = Color.argb(220, 0, 255, 0);
 						}
 					}
-					highlightLine(current().cpos, color);
+					highlightLine(current().vm.cpos, color);
 				}
-				toLog.append(current().latestLine);
-				final int newLintMsgCount = currentDoc().linter.messages.size();
+				toLog.append(current().vm.latestLine);
+				final int newLintMsgCount = current().linter.messages.size();
 				if (lintMessageCount < newLintMsgCount)
 				{
 					toLog.append("(+" + (newLintMsgCount - lintMessageCount) + " Lint messages)");
@@ -201,8 +209,8 @@ public class DebuggerFragment extends Fragment implements MainActivity.OnBackPre
 			}
 			f.code.setText(ssb);
 			updateLineNumbers();
-			f.reg.setText(Integer.toString(current().register));
-			f.vm_state.setText(current().state.name());
+			f.reg.setText(Integer.toString(current().vm.register));
+			f.vm_state.setText(current().vm.state.name());
 			f.log.setText(toLog.toString());
 			f.h.postDelayed(this, updInterval);
 		}

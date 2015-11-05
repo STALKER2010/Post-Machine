@@ -1,7 +1,7 @@
 package io.github.stalker2010.post.vm;
 import java.io.*;
 import java.util.*;
-import static io.github.stalker2010.post.PostApplication.currentDoc;
+import static io.github.stalker2010.post.PostApplication.current;
 import java.lang.ref.*;
 
 public class PostLinter
@@ -40,8 +40,5 @@ public class PostLinter
 	public void post(final String str)
 	{
 		post(str, vm.get().cpos);
-	}
-	static PostLinter current() {
-		return currentDoc().linter;
 	}
 }

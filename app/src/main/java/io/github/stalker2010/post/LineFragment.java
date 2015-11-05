@@ -1,15 +1,35 @@
 package io.github.stalker2010.post;
-import android.app.*;
+
 import android.graphics.*;
 import android.os.*;
+import android.support.v4.app.*;
 import android.view.*;
 import android.widget.*;
-import io.github.stalker2010.post.vm.*;
 import io.github.stalker2010.post.compat.*;
+
 import static io.github.stalker2010.post.PostApplication.*;
 
-public class LineFragment extends Fragment implements MainActivity.OnBackPressedListener, View.OnClickListener, View.OnLongClickListener
+public class LineFragment extends BaseFragment implements MainActivity.OnBackPressedListener, View.OnClickListener, View.OnLongClickListener
 {
+
+	@Override
+	public int viewID()
+	{
+		return R.layout.line;
+	}
+
+	@Override
+	public void initView()
+	{
+		super.initView();
+		for (int i=-12; i <= 12; i++)
+		{
+			final View bv = byId(diff_id(i));
+			bv.setOnClickListener(this);
+			bv.setOnLongClickListener(this);
+		}
+	}
+	
 
 	public volatile boolean fromDebugger = false;
 	public LineFragment()
@@ -17,18 +37,6 @@ public class LineFragment extends Fragment implements MainActivity.OnBackPressed
 
 	}
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-	{
-		View v = inflater.inflate(R.layout.line, container, false);
-		for (int i=-12; i <= 12; i++)
-		{
-			final View bv = v.findViewById(diff_id(i));
-			bv.setOnClickListener(this);
-			bv.setOnLongClickListener(this);
-		}
-		return v;
-	}
 	@Override
 	public void onResume()
 	{
@@ -52,11 +60,11 @@ public class LineFragment extends Fragment implements MainActivity.OnBackPressed
 
 	private void set(int diff, boolean state)
 	{
-		current().line.put(current().cline + diff, state);
+		current().vm.line.put(current().vm.cline + diff, state);
 	}
 	private boolean get(int diff)
 	{
-		return current().line.get(current().cline + diff);
+		return current().vm.line.get(current().vm.cline + diff);
 	}
 	public void load()
 	{
@@ -109,7 +117,7 @@ public class LineFragment extends Fragment implements MainActivity.OnBackPressed
 	}
 	private void setCell(int id, boolean state)
 	{
-		View v = getView().findViewById(id);
+		View v = byId(id);
 		if ((v != null) && (v instanceof Button))
 		{
 			Button b = (Button) v;
@@ -118,7 +126,7 @@ public class LineFragment extends Fragment implements MainActivity.OnBackPressed
 	}
 	private boolean getCell(int id)
 	{
-		View v = getView().findViewById(id);
+		View v = byId(id);
 		if ((v != null) && (v instanceof Button))
 		{
 			Button b = (Button) v;
@@ -128,7 +136,7 @@ public class LineFragment extends Fragment implements MainActivity.OnBackPressed
 	}
 	private void setCellCaret(int id)
 	{
-		View v = getView().findViewById(id);
+		View v = byId(id);
 		if (v != null)
 		{
 			v.setBackgroundColor(Color.GRAY);
@@ -156,7 +164,7 @@ public class LineFragment extends Fragment implements MainActivity.OnBackPressed
 		final int d = p1.getId();
 		if (d != View.NO_ID)
 		{
-			current().cline += id_diff(d);
+			current().vm.cline += id_diff(d);
 			load();
 			return true;
 		}
